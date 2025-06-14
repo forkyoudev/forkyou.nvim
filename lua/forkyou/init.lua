@@ -38,13 +38,13 @@ local start_time = nil
 local last_interaction = os.time()
 local idle_timeout = 120
 
-local function set_online(is_online)
+local function set_online(is_online, force)
   local token = config.api_token
   if not token then return end
 
   local body = vim.json.encode({ isOnline = is_online })
 
-  vim.fn.jobstart({
+  local cmd = {
     "curl",
     "-s",
     "-X", "PUT",
@@ -52,7 +52,15 @@ local function set_online(is_online)
     "-H", "Content-Type: application/json",
     "-H", "Authorization: Bearer " .. token,
     "-d", body,
-  }, { on_exit = function() end })
+  }
+
+  if force then
+    -- Synchronous call for shutdown
+    vim.fn.system(cmd)
+  else
+    -- Background async call for normal usage
+    vim.fn.jobstart(cmd, { on_exit = function() end })
+  end
 end
 
 local function get_project()
@@ -194,9 +202,9 @@ function M.setup(user_config)
 
   vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
-      set_online(false)
       flush_activity("vim leave")
       sync(true)
+      set_online(false, true)
     end,
   })
 
