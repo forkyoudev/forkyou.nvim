@@ -1,5 +1,3 @@
-local json = require("dkjson")
-
 local M = {}
 
 local function hex_to_bytes(hex)
@@ -117,7 +115,8 @@ local function sync()
     return
   end
 
-  local body = json.encode(activities, { indent = false }, false)
+  local body = vim.json.encode(activities)
+
   activities = {}
 
   local hmac_hex = get_hmac_signature(body, raw_key)
