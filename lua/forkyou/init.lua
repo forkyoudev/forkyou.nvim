@@ -194,9 +194,9 @@ function M.setup(user_config)
 
   vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
+      set_online(false)
       flush_activity("vim leave")
       sync(true)
-      set_online(false)
     end,
   })
 
