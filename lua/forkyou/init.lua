@@ -1,12 +1,14 @@
-local openssl_hmac = require("openssl.hmac")
-local json = require("dkjson")
-
 local M = {}
 
 local function hex_to_bytes(hex)
   return (hex:gsub('..', function(cc)
     return string.char(tonumber(cc, 16))
   end))
+end
+
+local function get_hmac_signature(message, key)
+  local cmd = string.format('echo -n "%s" | openssl dgst -sha256 -hmac "%s" -binary | xxd -p -c 256', message, key)
+  return vim.trim(vim.fn.system(cmd))
 end
 
 
@@ -113,13 +115,11 @@ local function sync()
     return
   end
 
-  local body = json.encode(activities, { indent = false }, false)
+  local body = vim.json.encode(activities)
+
   activities = {}
-  
-  local raw_digest = openssl_hmac.new(raw_key, "sha256"):final(body)
-  local hmac_hex = raw_digest:gsub(".", function(c)
-    return string.format("%02x", string.byte(c))
-  end)
+
+  local hmac_hex = get_hmac_signature(body, raw_key)
 
   if not hmac_hex then
     return
