@@ -6,7 +6,7 @@
 
 ```lua
 {
-  "yourusername/forkyou.nvim",
+  "forkyoudev/forkyou.nvim",
   config = function()
     require("forkyou").setup({
       api_token = "YOUR_API_TOKEN", -- Required
@@ -26,15 +26,6 @@
     })
   end,
 }
-```
-
-## Dependencies
-
-Install the following dependencies with `luarocks`:
-
-```bash
-luarocks install luaossl    # Required for HMAC signature
-luarocks install dkjson     # Required for JSON encoding
 ```
 
 ## API Token
