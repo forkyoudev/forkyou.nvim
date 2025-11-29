@@ -5,7 +5,7 @@
 ### With `lazy.nvim`
 
 ```lua
-{
+return {
   "forkyoudev/forkyou.nvim",
   config = function()
     require("forkyou").setup({
